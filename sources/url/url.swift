@@ -22,7 +22,7 @@ struct URL
             user:Range<Int>?,
             host:Range<Int>?,
             port:Range<Int>?,
-            path:Range<Int>?,
+            path:Range<Int>,
             query:Range<Int>?,
             fragment:Range<Int>?
 
@@ -697,12 +697,11 @@ struct URL
             self._port = port_number
         }
         
-        if let  path:Range<Int> = components.path, 
-                path.count > 0
+        if components.path.count > 0
         {
             // validate path string
             // *(unreserved / pct-encoded / sub-delims / ":" / "@" / "/")
-            for char:UInt8 in string[path] 
+            for char:UInt8 in string[components.path] 
             {
                 guard char.is_path_char 
                 else 
@@ -714,7 +713,8 @@ struct URL
             }
             
             for segment:ArraySlice<UInt8> in 
-                string[path].split(separator: 47, omittingEmptySubsequences: false) 
+                string[components.path].split(  separator: 47, 
+                                                omittingEmptySubsequences: false) 
             {
                 guard self.push_to_core(validating: segment)
                 else 
